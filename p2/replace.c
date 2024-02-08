@@ -34,6 +34,7 @@ static bool computeLen( char line[ LINE_MAX + 1], char word[ FIELD_MAX + 1], cha
     }
 
     if ((lineCount - placeCount + wordCount) > LINE_MAX) {
+        
         return false;
     }
 
@@ -49,7 +50,6 @@ void replaceWord( char line[ LINE_MAX + 1], char word[ FIELD_MAX + 1], char plac
             placeLength++;
         }
         char temp[LINE_MAX + 1];
-        int linePlace;
         for (int i = 0; line[i]; i++) {
             if (line[i] == '<' ) {
                 char placetemp[placeLength + 1];
@@ -57,21 +57,16 @@ void replaceWord( char line[ LINE_MAX + 1], char word[ FIELD_MAX + 1], char plac
                     int k = 0;
                     placetemp[k] = line[j];
                     k++;
+                    i = j;
                 }
                 if (strcmp(placeholder, placetemp) == 0) {
                     strcat(temp, word);
-                    for (int k = i; line[k] == '>'; k++) {
-                        linePlace = k + 1;
-                    }
-                    break;
                 }
             } else {
                 temp[i] = line[i];
             }
         }
-        for (int i = linePlace + 1; line[i]; i++) {
-            temp[i] = line[i];
-        }
+        
         line = temp;
     }
     
