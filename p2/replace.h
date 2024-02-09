@@ -18,8 +18,11 @@
 /** exit status 2*/
 #define EXIT_2 102
 
-/** exit status 1*/
+/** exit status 3*/
 #define EXIT_3 103
+
+/** exit status 4*/
+#define EXIT_4 104
 
 /**
  * replaces placeholders with the given replacement strings

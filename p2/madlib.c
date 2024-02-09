@@ -30,15 +30,16 @@ int main() {
     char place1[] = "noun1";
     char place2[] = "noun2";
     char place3[] = "verb";
-    char place4[] = "adj";
-    char place5[] = "adv";
+    char place4[] = "adjective";
+    char place5[] = "adverb";
     char line [LINE_MAX + 1];
     while (readLine(line)) {
         replaceWord(line, noun1, place1);
         replaceWord(line, noun2, place2);
-        replaceWord(line, noun2, place3);
-        replaceWord(line, noun2, place4);
-        replaceWord(line, noun2, place5);
+        replaceWord(line, verb, place3);
+        replaceWord(line, adj, place4);
+        replaceWord(line, adv, place5);
         printf("%s\n", line);
     }
+    return EXIT_SUCCESS;
 }
