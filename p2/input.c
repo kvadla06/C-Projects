@@ -27,7 +27,7 @@ void readWord( char word[ FIELD_MAX + 1 ])
                     exit(EXIT_2);
                 }
             } else {
-                if (word[i] != '\'' || word[i] != '-') {
+                if (word[i] != '\'' && word[i] != '-') {
                     exit(EXIT_2);
                 }
             }
