@@ -36,9 +36,10 @@ bool parseNumber( long *val, FILE *input )
   
   if (ch == '-') {
     neg = true;
+    ch = fgetc(input);
   }
-  if ('A' <= ch || ch <= 'T') {
-    while ( 'A' <= ch || ch <= 'T' ) {
+  if ('A' <= ch && ch <= 'T') {
+    while ( 'A' <= ch && ch <= 'T' ) {
         int d = ch - CONVERT;
         if (!multiply(val, *val, BASE)) {
             return false;
@@ -71,6 +72,7 @@ void printNumber( long val, FILE *output )
   
   if (val == 0) {
     str[idx] = 'A';
+    idx++;
   }
 
   while ( val != 0 ) {
@@ -83,7 +85,7 @@ void printNumber( long val, FILE *output )
 
   str[ idx ] = '\0';
 
-  for (int i = idx - 1; i < 0; i--) {
+  for (int i = idx - 1; i >= 0 ; i--) {
     fputc(str[i], output);
   }
 }

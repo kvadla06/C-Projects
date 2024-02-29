@@ -10,7 +10,7 @@
 
 bool add( long *result, long a, long b )
 {
-    if ((b > 0 && a > LONG_MAX - b) || (b < 0 && a < LONG_MIN - b)) {
+    if ((b > 0 && a > LONG_MAX - b + 1) || (b < 0 && a < LONG_MIN - b)) {
         return false;
     }
 
