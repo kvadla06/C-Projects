@@ -58,6 +58,7 @@ int main (int argc, char *argv[])
 
   fclose(fi);
   fclose(fw);
+  return 0;
 }
 
 /**
@@ -97,40 +98,44 @@ bool parseOperand( long *val, char *vname, FILE *input )
 */
 bool parseExpression( long *result, long left, FILE *input )
 {
-    char operator = skipWhitespace(input);
+    char operator; 
     char vname;
     long val = 0;
-    if (operator != '+' && operator != '-' && operator != '/' && operator != '*') {
-        return false;
+    
+    while ((operator = skipWhitespace(input)) != ';'){
+        if (operator != '+' && operator != '-' && operator != '/' && operator != '*') {
+            return false;
+        }
+        if (!parseOperand(&val, &vname, input)) {
+            return false;
+        }
+        if (vname != '\0') {
+            value = var[vname - CONVERT_L];
+        }
+        switch (operator) {
+            case '-':
+                if (!subtract(result, left, val)){
+                    return false;
+                    }
+                    break;
+            case '+':
+                if (!add(result, left, val)){
+                    return false;
+                }
+                break;
+            case '*':
+                if (!multiply(result, left, val)){
+                    return false;
+                }
+                break;
+            case '/':
+                if (!divide(result, left, val)){
+                    return false;
+                }
+                break;
+        }
     }
-    if (!parseOperand(&val, &vname, input)) {
-        return false;
-    }
-    if (vname != '\0') {
-        value = var[vname - CONVERT_L];
-    }
-    switch (operator) {
-        case '-':
-            if (!subtract(result, left, val)){
-                return false;
-            }
-            break;
-        case '+':
-            if (!add(result, left, val)){
-                return false;
-            }
-            break;
-        case '*':
-            if (!multiply(result, left, val)){
-                return false;
-            }
-            break;
-        case '/':
-            if (!divide(result, left, val)){
-                return false;
-            }
-            break;
-    }
+    
 }
 
 /**
