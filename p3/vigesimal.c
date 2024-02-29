@@ -38,10 +38,10 @@ bool parseNumber( long *val, FILE *input )
   if ('A' <= ch <= 'T') {
     while ( 'A' <= ch <= 'T' ) {
         int d = ch - CONVERT;
-        if (!multiply(*val, *val, BASE)) {
+        if (!multiply(val, *val, BASE)) {
             return false;
             }
-        if (!add(*val, *val, d)) {
+        if (!add(val, *val, d)) {
             return false;
         }
         ch = skipWhitespace(input);

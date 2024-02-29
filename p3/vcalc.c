@@ -20,6 +20,9 @@
 /** number of letters in alphabet */
 #define ALPHA 26
 
+/** number to convert between lowercase letters to array values that they're stored in*/
+#define CONVERT_L 97
+
 /** array to hold values of variables */
 long var[ALPHA];
 
@@ -72,10 +75,11 @@ bool parseOperand( long *val, char *vname, FILE *input )
     char ch = fgetc(input); 
     if (islower(ch) != 0) {
         *vname = ch;
+        *val = 0;
     } else if (ch == '-' || 'A' <= ch <= 'T') {
         ungetc(input);
         *vname = '\0';
-        bool valid = parseNumber(*val, *input);
+        bool valid = parseNumber(val, input);
         return valid;
     } else{
         return false;
@@ -93,12 +97,45 @@ bool parseOperand( long *val, char *vname, FILE *input )
 */
 bool parseExpression( long *result, long left, FILE *input )
 {
-    
+    char operator = skipWhitespace(input);
+    char vname;
+    long val = 0;
+    if (operator != '+' && operator != '-' && operator != '/' && operator != '*') {
+        return false;
+    }
+    if (!parseOperand(&val, &vname, input)) {
+        return false;
+    }
+    if (vname != '\0') {
+        value = var[vname - CONVERT_L];
+    }
+    switch (operator) {
+        case '-':
+            if (!subtract(result, left, val)){
+                return false;
+            }
+            break;
+        case '+':
+            if (!add(result, left, val)){
+                return false;
+            }
+            break;
+        case '*':
+            if (!multiply(result, left, val)){
+                return false;
+            }
+            break;
+        case '/':
+            if (!divide(result, left, val)){
+                return false;
+            }
+            break;
+    }
 }
 
 /**
-* This function reads an expression as a sequence of operands separated by the ‘+’, ‘-’, ’*’ and ‘/’ operators.
-* It computes the result of the whole expression and stores it in the long variable pointed to by result.
+* This function reads the next statement from the input stream. If it’s an expression, 
+* it reports its value to the given output stream using the given stmt number as the statement number.
 * @param stmtNum number of statement to print
 * @param input file input stream to read from
 * @param output file output stream to write to 
@@ -106,5 +143,54 @@ bool parseExpression( long *result, long left, FILE *input )
 */
 bool parseStatement( int stmtNum, FILE *input, FILE *output )
 {
-    
+    long value = 0; 
+    long result = 0;
+    char vname;
+    char ch;
+    if (parseOperand(&value, &vname, input)) {
+        if (vname != '\0') {
+            ch = skipWhitespace(input);
+            if (ch == '=') {
+                ch = skipWhitespace(input);
+                ungetc(input);
+                if (parseOperand(&value, &value, input)) {
+                    ch = skipWhitespace(input);
+                    if (ch == ';') {
+                        var[vname - CONVERT_L] = value;
+                    } else {
+                        ungetc(input);
+                        if (parseExpression(&result, &value, input)){
+                            var[vname - CONVERT_L] = result;
+                            return true;
+                        } else {
+                            fprintf(output, "S%d: invalid\n", stmtNum);
+                            return false;
+                        }
+                    }
+                } else {
+                    fprintf(output, "S%d: invalid\n", stmtNum);
+                    return false;
+                }
+            } else {
+                value = var[vname - CONVERT_L];
+            }
+        }
+        ch = skipWhitespace(input);
+        if (ch != '+' && ch != '-' && ch != '/' && ch != '*') {
+            fprintf(output, "S%d: invalid\n", stmtNum);
+            return false;
+        }
+        ungetc(input);
+        if (parseExpression(&result, &value, input)) {
+            fprintf(output, "S%d: %ld\n", stmtNum, result);
+            return true;
+        } else {
+            fprintf(output, "S%d: invalid\n", stmtNum);
+            return false;
+        }
+
+    } else {
+        fprintf(output, "S%d: invalid\n", stmtNum);
+        return false;
+    }
 }
