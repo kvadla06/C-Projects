@@ -35,7 +35,7 @@ bool multiply(long *result, long a, long b)
             return false; 
         }
     } else if (a < -1) {
-        if (b > 0 && a < LONG_MIN / b || b < 0 && a < LONG_MAX / b) {
+        if ((b > 0 && a < LONG_MIN / b) || (b < 0 && a < LONG_MAX / b)) {
             return false; 
         }
     } else if (a == -1 && b == LONG_MIN) {

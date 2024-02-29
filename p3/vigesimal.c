@@ -6,6 +6,7 @@
 
 #include "vigesimal.h"
 #include "check.h"
+#include <ctype.h>
 
 /** Base of the number system we're implementing. */
 #define BASE 20
@@ -35,8 +36,8 @@ bool parseNumber( long *val, FILE *input )
   if (ch == '-') {
     neg = true;
   }
-  if ('A' <= ch <= 'T') {
-    while ( 'A' <= ch <= 'T' ) {
+  if ('A' <= ch || ch <= 'T') {
+    while ( 'A' <= ch || ch <= 'T' ) {
         int d = ch - CONVERT;
         if (!multiply(val, *val, BASE)) {
             return false;
@@ -71,16 +72,16 @@ void printNumber( long val, FILE *output )
   }
 
   while ( val != 0 ) {
-    int d = val % 20;
+    int d = val % BASE;
     char ch = d + CONVERT;
     str[ idx ] = ch;
     idx++;
-    val = val / 20;
+    val = val / BASE;
   }
 
   str[ idx ] = '\0';
 
-  for (int i = idx - 1; i < 0; i--; ) {
+  for (int i = idx - 1; i < 0; i--) {
     fputc(str[i], output);
   }
 }

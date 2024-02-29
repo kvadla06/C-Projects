@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdbool.h>
+#include <ctype.h>
 
 #include "vigesimal.h"
 #include "check.h"
@@ -32,34 +33,7 @@ static void usage()
   exit( EXIT_FAILURE );
 }
 
-int main (int argc, char *argv[]) 
-{
-    if (argc != OUTPUT_ARG || argc != OUTPUT_ARG + 1) {
-        usage();
-    }
-    FILE *fi;
-    if ( ( fi = fopen( argv[INPUT_ARG], "r" ) ) == NULL ) {
-        fprintf( stderr, "Can't open file: %s\n", argv[INPUT_ARG] );
-        exit( EXIT_FAILURE );
-    }
 
-    FILE *fw;
-    if (argv[OUTPUT_ARG] != '\0') {
-        *fw = fopen(argv[OUTPUT_ARG], "w");
-    } else {
-        *fw = fopen("output.txt", "w");
-    }
-    
-    int stmtNum = 0; 
-    while (!feof(fi)) {
-        parseStatement(stmtNum, *fi, *fw);
-        stmtNum++;
-    }
-
-  fclose(fi);
-  fclose(fw);
-  return 0;
-}
 
 /**
 * This function attempts to read the next operand from the given input stream. 
@@ -77,8 +51,8 @@ bool parseOperand( long *val, char *vname, FILE *input )
     if (islower(ch) != 0) {
         *vname = ch;
         *val = 0;
-    } else if (ch == '-' || 'A' <= ch <= 'T') {
-        ungetc(input);
+    } else if (ch == '-' || 'A' <= ch || ch <= 'T') {
+        ungetc(ch, input);
         *vname = '\0';
         bool valid = parseNumber(val, input);
         return valid;
@@ -110,7 +84,7 @@ bool parseExpression( long *result, long left, FILE *input )
             return false;
         }
         if (vname != '\0') {
-            value = var[vname - CONVERT_L];
+            val = var[vname - CONVERT_L];
         }
         switch (operator) {
             case '-':
@@ -157,14 +131,14 @@ bool parseStatement( int stmtNum, FILE *input, FILE *output )
             ch = skipWhitespace(input);
             if (ch == '=') {
                 ch = skipWhitespace(input);
-                ungetc(input);
-                if (parseOperand(&value, &value, input)) {
+                ungetc(ch, input);
+                if (parseOperand(&value, &vname, input)) {
                     ch = skipWhitespace(input);
                     if (ch == ';') {
                         var[vname - CONVERT_L] = value;
                     } else {
-                        ungetc(input);
-                        if (parseExpression(&result, &value, input)){
+                        ungetc(ch, input);
+                        if (parseExpression(&result, value, input)){
                             var[vname - CONVERT_L] = result;
                             return true;
                         } else {
@@ -185,8 +159,8 @@ bool parseStatement( int stmtNum, FILE *input, FILE *output )
             fprintf(output, "S%d: invalid\n", stmtNum);
             return false;
         }
-        ungetc(input);
-        if (parseExpression(&result, &value, input)) {
+        ungetc(ch, input);
+        if (parseExpression(&result, value, input)) {
             fprintf(output, "S%d: %ld\n", stmtNum, result);
             return true;
         } else {
@@ -198,4 +172,33 @@ bool parseStatement( int stmtNum, FILE *input, FILE *output )
         fprintf(output, "S%d: invalid\n", stmtNum);
         return false;
     }
+}
+
+int main (int argc, char *argv[]) 
+{
+    if (argc != OUTPUT_ARG || argc != OUTPUT_ARG + 1) {
+        usage();
+    }
+    FILE *fi;
+    if ( ( fi = fopen( argv[INPUT_ARG], "r" ) ) == NULL ) {
+        fprintf( stderr, "Can't open file: %s\n", argv[INPUT_ARG] );
+        exit( EXIT_FAILURE );
+    }
+
+    FILE *fw;
+    if (*argv[OUTPUT_ARG] != '\0') {
+        fw = fopen(argv[OUTPUT_ARG], "w");
+    } else {
+        fw = fopen("output.txt", "w");
+    }
+    
+    int stmtNum = 0; 
+    while (!feof(fi)) {
+        parseStatement(stmtNum, fi, fw);
+        stmtNum++;
+    }
+
+  fclose(fi);
+  fclose(fw);
+  return 0;
 }
