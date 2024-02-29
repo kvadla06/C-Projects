@@ -19,12 +19,13 @@
 
 int skipWhitespace( FILE *input )
 {
-    char ch;
+    char ch = 0;
     while ((ch = fgetc(input)) != EOF) {
         if (isspace(ch) == 0) {
             return ch;
         }
     }
+    return ch;
 }
 
 bool parseNumber( long *val, FILE *input )
@@ -55,6 +56,7 @@ bool parseNumber( long *val, FILE *input )
     *val *= -1;
   }
   ungetc(ch, input);
+  return true;
 }
 
 void printNumber( long val, FILE *output )

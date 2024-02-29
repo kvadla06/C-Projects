@@ -47,7 +47,7 @@ static void usage()
 */
 bool parseOperand( long *val, char *vname, FILE *input )
 {
-    char ch = fgetc(input); 
+    char ch = skipWhitespace(input); 
     if (islower(ch) != 0) {
         *vname = ch;
         *val = 0;
@@ -56,10 +56,8 @@ bool parseOperand( long *val, char *vname, FILE *input )
         *vname = '\0';
         bool valid = parseNumber(val, input);
         return valid;
-    } else{
-        return false;
-    }
-   
+    } 
+   return false;
 }
 
 /**
@@ -109,7 +107,7 @@ bool parseExpression( long *result, long left, FILE *input )
                 break;
         }
     }
-    
+    return true;
 }
 
 /**
@@ -138,16 +136,22 @@ bool parseStatement( int stmtNum, FILE *input, FILE *output )
                         var[vname - CONVERT_L] = value;
                     } else {
                         ungetc(ch, input);
-                        if (parseExpression(&result, value, input)){
+                        if (parseExpression(&result, value, input)) {
                             var[vname - CONVERT_L] = result;
                             return true;
                         } else {
                             fprintf(output, "S%d: invalid\n", stmtNum);
+                            while ((ch = skipWhitespace(input)) != ';') {
+                                //parse through input
+                            }
                             return false;
                         }
                     }
                 } else {
                     fprintf(output, "S%d: invalid\n", stmtNum);
+                    while ((ch = skipWhitespace(input)) != ';') {
+                        //parse through input
+                    }
                     return false;
                 }
             } else {
@@ -157,6 +161,9 @@ bool parseStatement( int stmtNum, FILE *input, FILE *output )
         ch = skipWhitespace(input);
         if (ch != '+' && ch != '-' && ch != '/' && ch != '*') {
             fprintf(output, "S%d: invalid\n", stmtNum);
+            while ((ch = skipWhitespace(input)) != ';') {
+                //parse through input
+            }
             return false;
         }
         ungetc(ch, input);
@@ -165,18 +172,24 @@ bool parseStatement( int stmtNum, FILE *input, FILE *output )
             return true;
         } else {
             fprintf(output, "S%d: invalid\n", stmtNum);
+            while ((ch = skipWhitespace(input)) != ';') {
+                //parse through input
+            }
             return false;
         }
 
     } else {
         fprintf(output, "S%d: invalid\n", stmtNum);
+        while ((ch = skipWhitespace(input)) != ';') {
+            //parse through input
+        }
         return false;
     }
 }
 
 int main (int argc, char *argv[]) 
 {
-    if (argc != OUTPUT_ARG || argc != OUTPUT_ARG + 1) {
+    if (argc != INPUT_ARG && argc != OUTPUT_ARG) {
         usage();
     }
     FILE *fi;
