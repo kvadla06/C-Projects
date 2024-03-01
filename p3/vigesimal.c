@@ -7,6 +7,7 @@
 #include "vigesimal.h"
 #include "check.h"
 #include <ctype.h>
+#include <limits.h>
 
 /** Base of the number system we're implementing. */
 #define BASE 20
@@ -32,11 +33,25 @@ bool parseNumber( long *val, FILE *input )
 {
   *val = 0;
   char ch = skipWhitespace(input);
-  bool neg = false;
   
   if (ch == '-') {
-    neg = true;
     ch = fgetc(input);
+    if ('A' <= ch && ch <= 'T') {
+        while ( 'A' <= ch && ch <= 'T' ) {
+            int d = (ch - CONVERT);
+            if (!multiply(val, *val, BASE)) {
+                return false;
+            }
+            if (!subtract(val, *val, d)) {
+                return false;
+            }
+            ch = fgetc(input);
+        }
+    }  else {
+        return false;
+    }
+    ungetc(ch, input);
+    return true;
   }
   if ('A' <= ch && ch <= 'T') {
     while ( 'A' <= ch && ch <= 'T' ) {
@@ -47,15 +62,12 @@ bool parseNumber( long *val, FILE *input )
         if (!add(val, *val, d)) {
             return false;
         }
-        ch = skipWhitespace(input);
+        ch = fgetc(input);
     }
-} else {
+  } else {
     return false;
-}
-  
-  if (neg) {
-    *val *= -1;
   }
+  
   ungetc(ch, input);
   return true;
 }
@@ -64,9 +76,14 @@ void printNumber( long val, FILE *output )
 {
   int idx = 0;
   char str[MAX_NUMBER_LEN];
+  bool longmin = false;
 
   if (val < 0) {
     fputc('-', output);
+    if (val == LONG_MIN) {
+        val += 1;
+        longmin = true;
+    }
     val = val * -1;
   }
   
@@ -74,11 +91,21 @@ void printNumber( long val, FILE *output )
     str[idx] = 'A';
     idx++;
   }
-
+  
+  int addone = 0;
   while ( val != 0 ) {
     int d = val % BASE;
     char ch = d + CONVERT;
-    str[ idx ] = ch;
+    if (longmin) {
+        if (addone == 0) {
+            str[ idx ] = ch + 1;
+            addone = 1;
+        } else {
+            str[ idx ] = ch;
+        }
+    } else {
+        str[ idx ] = ch;
+    }
     idx++;
     val = val / BASE;
   }
