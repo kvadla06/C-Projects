@@ -14,9 +14,9 @@
 */
 typedef struct Record {
     int id, copies;
-    char genre[GENRE_INITIAL];
-    char title[TITLEART_INITIAL];
-    char artist[TITLEART_INITIAL];
+    char genre[GENRE_INITIAL + 1];
+    char title[TITLEART_INITIAL + 1];
+    char artist[TITLEART_INITIAL + 1];
 } Record;
 
 /**

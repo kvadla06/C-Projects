@@ -12,6 +12,8 @@
 
 /** Initial capacity of inventory*/
 #define INVENT_CAPACITY 5
+/** Number of parameters on line 1 of record file*/
+#define NUM_PARAM 3
 
 Inventory *makeInventory()
 {
@@ -41,12 +43,32 @@ void readRecords( char const *filename, Inventory *inventory )
     char *str;
     while ((str = readLine(fp)) != NULL) {
         Record *rec = (Record*)malloc(sizeof(Record));
-        if (sscanf(str, "%d %s %d", &rec->id, rec->genre, &rec->copies) != 3) {
+        if (sscanf(str, "%d %s %d", &rec->id, rec->genre, &rec->copies) != NUM_PARAM) {
             fprintf( stderr, "Invalid record file: %s\n", filename);
             exit( EXIT_FAILURE );
         }
-        strcpy(rec->artist, readLine(fp));
-        strcpy(rec->title, readLine(fp));
+        str = readLine(fp);
+        int len = 0;
+        for (int i = 0; str[i] != '\0'; i++) {
+            len++;
+        }
+        if (len > TITLEART_INITIAL) {
+            fprintf( stderr, "Invalid record file: %s\n", filename);
+            exit( EXIT_FAILURE );
+        } else {
+            strcpy(rec->artist, str);
+        }
+        str = readLine(fp);
+        len = 0;
+        for (int i = 0; str[i] != '\0'; i++) {
+            len++;
+        }
+        if (len > TITLEART_INITIAL) {
+            fprintf( stderr, "Invalid record file: %s\n", filename);
+            exit( EXIT_FAILURE );
+        } else {
+            strcpy(rec->title, str);
+        }
     
     
         if (rec->id < 0 || rec->copies < 0) {
