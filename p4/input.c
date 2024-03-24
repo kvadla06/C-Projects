@@ -1,7 +1,7 @@
 /**
- * @file input.c
- * @author krvadla Kavya Vadla
- * input file to read a line from the given input stream
+* @file input.c
+* @author krvadla Kavya Vadla
+* input file to read a line from the given input stream
 */
 
 #include "input.h"

@@ -5,15 +5,18 @@
 */
 
 #include <stdbool.h>
-
+/**Initializing value for genre*/
+#define GENRE_INITIAL 12
+/**Initializing value for title and artist*/
+#define TITLEART_INITIAL 30
 /**
 * A Record of music will have a field for its id number, number of copies, genre, title, and artist
 */
 typedef struct Record {
     int id, copies;
-    char genre[12];
-    char title[30];
-    char artist[30];
+    char genre[GENRE_INITIAL];
+    char title[TITLEART_INITIAL];
+    char artist[TITLEART_INITIAL];
 } Record;
 
 /**

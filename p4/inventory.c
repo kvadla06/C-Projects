@@ -90,9 +90,7 @@ void sortRecords( Inventory *inventory, int (* compare) (void const *va, void co
 
 void listRecords( Inventory *inventory, bool (*test)( Record const *record, char const *str ), char const *str )
 {
-    int num = 0;
-    num = printf("%3s %-30s %-30s %-12s %6s\n", "ID", "Artist", "Title", "Genre", "Copies");
-    printf("%d", num);
+    printf("%-3s %-30s %-30s %-12s %6s\n", "ID", "Artist", "Title", "Genre", "Copies");
     for (int i = 0; i < inventory->count; i++) {
         if (test(inventory->list[i], str)) {
             printf("%3d %-30s %-30s %-12s %6d\n", inventory->list[i]->id, inventory->list[i]->artist, inventory->list[i]->title, inventory->list[i]->genre, inventory->list[i]->copies);
