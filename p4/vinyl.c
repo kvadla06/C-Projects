@@ -50,9 +50,9 @@ static int idComp(void const *aptr, void const *bptr)
     Record const *a = aptr;
     Record const *b = bptr;
 
-    if (*a.id < *b.id) {
+    if (a->id < b->id) {
         return -1;
-    } else if (*a.id > *b.id) {
+    } else if (a->id > b->id) {
         return 1;
     } 
     return 0;
@@ -72,19 +72,19 @@ static int genreComp(void const *aptr, void const *bptr)
     Record const *a = aptr;
     Record const *b = bptr;
 
-    if (strcmp(*a.artist, *b.artist) < 0) {
+    if (strcmp(a->artist, b->artist) < 0) {
         return -1;
-    } else if (strcmp(*a.artist, *b.artist) > 0) {
+    } else if (strcmp(a->artist, b->artist) > 0) {
         return 1;
     } else {
-        if (strcmp(*a.title, *b.title) < 0) {
+        if (strcmp(a->title, b->title) < 0) {
             return -1;
-        } else if (strcmp(*a.title, *b.title) > 0) {
+        } else if (strcmp(a->title, b->title) > 0) {
             return 1;
         } else {
-            if (*a.id < *b.id) {
+            if (a->id < b->id) {
                 return -1;
-            } else if (*a.id > *b.id) {
+            } else if (a->id > b->id) {
                 return 1;
             }
         }
@@ -94,12 +94,24 @@ static int genreComp(void const *aptr, void const *bptr)
 
 /**
 * A test function that returns true no matter what, 
-* used to print all the records in the inventory or order
+* used to print all the records in the inventory 
 * @param record pointer to a record that will be printed
 * @param str pointer to a string, in this case NULL since all records will be printed
 * @return returns true to print all records
 */
 static bool testTrue(Record const *record, char const *str)
+{
+    return true;
+}
+
+/**
+* A test function that returns true no matter what, 
+* used to print all the records in the inventory or order
+* @param record pointer to a record that will be printed
+* @param str pointer to a string, in this case NULL since all records will be printed
+* @return returns true to print all records
+*/
+static bool testTrueOrder(OrderItem  const *orderitem, char const *str)
 {
     return true;
 }
@@ -113,10 +125,25 @@ static bool testTrue(Record const *record, char const *str)
 */
 static bool testGenre(Record const *record, char const *str) 
 {
-    if (strcmp(record.genre, str) == 0) {
+    if (strcmp(record->genre, str) == 0) {
         return true;
     }
     return false;
+}
+
+/**
+* This function prints all of the records in the order
+* @param order inventory to print records from
+* @param test function used to figure out which records to print
+*/
+static void listOrderRecords( Order *order, bool (*test)( OrderItem const *orderitem, char const *str ), char const *str )
+{
+    printf("%3s %-30s %-30s %-12s %6s\n", "ID", "Artist", "Title", "Genre", "Copies");
+    for (int i = 0; i < order->count; i++) {
+        if (test(order->list[i], str)) {
+            printf("%3d %-30s %-30s %-12s %6d\n", order->list[i]->rec->id, order->list[i]->rec->artist, order->list[i]->rec->title, order->list[i]->rec->genre, order->list[i]->rec->copies);
+        }
+    }
 }
 
 int main(int argc, char *argv[]) {
@@ -126,139 +153,131 @@ int main(int argc, char *argv[]) {
     }
 
     Inventory *invent = makeInventory();
-    Order order = { .count = 0;
-                    .capacity = ORDER_CAPACITY;
-                    .list = (OrderItem **)malloc(ORDER_CAPACITY * sizeof(OrderItem *));
-    }
+    Order order = { .count = 0,
+                    .capacity = ORDER_CAPACITY,
+                    .list = (OrderItem **)malloc(ORDER_CAPACITY * sizeof(OrderItem *))};
     for (int i = 1; argv[i]; i++) {
-        FILE *fp;
-        if ( ( fp = fopen( argv[i], "r" ) ) == NULL ) {
-            fprintf( stderr, "Can't open file: %s\n", argv[i] );
-            exit( EXIT_FAILURE );
-        } else {
-            readRecords(fp, invent);
-        }
+        readRecords(argv[i], invent);
     }
     printf("cmd> \n");
     char *command;
-    while ((command = readLine()) != NULL|| (strcmp(command, "quit")) != 0) {
-        char *user;
+    while ((command = readLine(stdin)) != NULL|| (strcmp(command, "quit")) != 0) {
+        char user[ARRAY_INITAL];
         sscanf(command, "%s", user);
-        switch (user) {
-            case "list":
-                printf("list\n");
-                char *genre;
-                char *param;
-                int paramnum = sscanf(command, "%s %s %s", user, param, genre);
-                if (paramnum == PARAM_MAX) {
-                    if (strcmp(param, "genre") != 0) {
-                        printf("Invalid command\n");
-                        break;
-                    } else {
-                        sortRecords(invent, genreComp);
-                        listRecords(invent, testGenre, genre);
-                    }    
-                } else if (paramnum == PARAM_MAX - 1) {
-                    if (strcmp(param, "order") != 0) {
-                        printf("Invalid command\n");
-                        break;
-                    } else {
-                        listRecords(order, testTrue, NULL);
-                    } 
-                } else if (paramnum == 1) {
-                    sortRecords(invent, idComp);
-                    listRecords(invent, testTrue, NULL);
-                }
-                break;
-            case "add":
-                printf("add\n");
-                int recid;
-                int reccopy;
-                int paramnum = sscanf(command, "%s %d %d", user, recid, reccopy); 
-                if (paramnum != PARAM_MAX || reccopy < 0) {
+        if (strcmp(user, "list") == 0) {
+            printf("list\n");
+            char genre[ARRAY_INITAL];
+            char param[ARRAY_INITAL];
+            int paramnum = sscanf(command, "%s %s %s", user, param, genre);
+            if (paramnum == PARAM_MAX) {
+                if (strcmp(param, "genre") != 0) {
                     printf("Invalid command\n");
                     break;
-                }
-                bool found = false;
-                for (int i = 0; i < *invent.count; i++) {
-                    if (*invent.list[i].id == recid) {
-                        if (*invent.list[i].copies >= reccopy) {
-                            Record recptr = **invent.list[i]
-                            OrderItem orditem = { .rec = recptr;
-                                                  .copies = reccopy;
-                            }
-                            OrderItem *ordptr = orditem;
-                            order[order.count] = ordptr;
-                            order.count++;
-                            found = true;
-                            if (order.count >= order.capacity) {
-                                order.capacity *= 2;
-                                order.list = (OrderItem *)realloc(order.list, order.capacity * sizeof(OrderItem *));
-                            }
-                        }
-                    }
-                }
-                if (!found) {
+                } else {
+                    sortRecords(invent, genreComp);
+                    listRecords(invent, testGenre, genre);
+                }    
+            } else if (paramnum == PARAM_MAX - 1) {
+                if (strcmp(param, "order") != 0) {
                     printf("Invalid command\n");
-                    break;
-                }
-                break;
-            case "remove":
-                printf("remove\n");
-                int recid;
-                int reccopy;
-                int paramnum = sscanf(command, "%s %d %d", user, recid, reccopy); 
-                if (paramnum != PARAM_MAX || reccopy < 0) {
-                    printf("Invalid command\n");
-                    break;
-                }
-                bool found = false;
-                for (int i = 0; i < ordersize; i++) {
-                    if (order[i].*rec.id == recid) {
-                        if (order[i].copies >= reccopy) {
-                            order[i].copies -= reccopy;
-                            found = true;
-                            if (order[i].copies == 0) {
-                                order[i] = NULL;
-                                for (int j = i; j < order.count - 1; j++) {
-                                    order[j] = order[j + 1];
-                                }
-                                order.count--;
-                            }
-                        }
-                    }
-                }
-                if (!found) {
-                    printf("Invalid command\n");
-                    break;
-                }
-                break;
-            case "checkout":
-                printf("checkout\n");
-                for (int i = 0; i < order.count; i++) {
-                    for (int j = 0; j < *invent.count; j++) {
-                        if (order[i].*rec.id == *invent.list[j].id) {
-                            *invent.list[j].copies -= order[i].copies;
-                            break;
-                        }
-                    }
-                }
-                for (int i = 0; i < order.count; i++) {
-                    free(order[i]);
-                }
-                order.list = (OrderItem **)malloc(ORDER_CAPACITY * sizeof(OrderItem *));
-            default:
+                } else {
+                    Order *ord = &order;
+                    listOrderRecords(ord, testTrueOrder, NULL);
+                } 
+            } else if (paramnum == 1) {
+                sortRecords(invent, idComp);
+                listRecords(invent, testTrue, NULL);
+            }
+        } else if (strcmp(user, "add") == 0) {
+            printf("add\n");
+            int recid;
+            int reccopy;
+            int paramnum = sscanf(command, "%s %d %d", user, &recid, &reccopy); 
+            if (paramnum != PARAM_MAX || reccopy < 0) {
                 printf("Invalid command\n");
+            }
+            bool found = false;
+            for (int i = 0; i < invent->count; i++) {
+                if (invent->list[i]->id == recid) {
+                    if (invent->list[i]->copies >= reccopy) {
+                        Record *recptr = invent->list[i];
+                        OrderItem orditem = { .rec = recptr,
+                                              .copies = reccopy};
+                        OrderItem *ordptr = &orditem;
+                        order.list[order.count] = ordptr;
+                        order.count++;
+                        found = true;
+                        if (order.count >= order.capacity) {
+                            order.capacity *= 2;
+                            order.list = (OrderItem **)realloc(order.list, order.capacity * sizeof(OrderItem *));
+                        }
+                    }
+                }
+            }
+            if (!found) {
+                printf("Invalid command\n");
+            }
+        } else if (strcmp(user, "remove") == 0) {
+            printf("remove\n");
+            int recid;
+            int reccopy;
+            int paramnum = sscanf(command, "%s %d %d", user, &recid, &reccopy); 
+            if (paramnum != PARAM_MAX || reccopy < 0) {
+                printf("Invalid command\n");
+                break;
+            }
+            bool found = false;
+            for (int i = 0; i < order.count; i++) {
+                if (order.list[i]->rec->id == recid) {
+                    if (order.list[i]->copies >= reccopy) {
+                        order.list[i]->copies -= reccopy;
+                        found = true;
+                        if (order.list[i]->copies == 0) {
+                            order.list[i] = NULL;
+                            for (int j = i; j < order.count - 1; j++) {
+                                order.list[j] = order.list[j + 1];
+                            }
+                            order.count--;
+                        }
+                    }
+                }
+            }
+            if (!found) {
+                printf("Invalid command\n");
+            }
+        } else if (strcmp(user, "checkout")) {
+            printf("checkout\n");
+            for (int i = 0; i < order.count; i++) {
+                for (int j = 0; j < invent->count; j++) {
+                    if (order.list[i]->rec->id == invent->list[j]->id) {
+                        invent->list[j]->copies -= order.list[i]->copies;
+                        if (invent->list[j]->copies == 0) {
+                            order.list[j] = NULL;
+                            for (int k = j; k < order.count - 1; k++) {
+                                order.list[k] = order.list[k + 1];
+                            }
+                            order.count--;
+                        }
+                    }
+                }
+            }
+            for (int i = 0; i < order.count; i++) {
+                free(order.list[i]);
+            }
+            order.list = (OrderItem **)malloc(ORDER_CAPACITY * sizeof(OrderItem *));
+        } else {
+            printf("Invalid command\n");
         }
         printf("cmd> \n");
     }
     if ((strcmp(command, "quit")) == 0) {
         printf("quit\n");
     }
-    freeInventory();
+    freeInventory(invent);
     for (int i = 0; i < order.count; i++) {
-        free(order[i]);
+        free(order.list[i]);
     }
-    free(order);
+    Order *ordptr = &order;
+    free(ordptr);
     return 0;
 }
