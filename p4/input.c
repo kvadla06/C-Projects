@@ -5,7 +5,6 @@
 */
 
 #include "input.h"
-#include <stdio.h>
 #include <stdlib.h>
 
 /** Number to initialize array length to*/
@@ -19,7 +18,7 @@ char *readLine( FILE *fp )
     int ind = 0;
     int ch;
 
-    while ((ch = fgetc(fp)) != '\n' || ch != EOF) {
+    while ((ch = fgetc(fp)) != '\n' && ch != EOF) {
         str[ind] = ch;
         ind++; 
         if (ind > arraySize) {
