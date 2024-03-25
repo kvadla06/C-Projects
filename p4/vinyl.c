@@ -259,9 +259,11 @@ int main(int argc, char *argv[]) {
                                     order->list = (OrderItem **)realloc(order->list, order->capacity * sizeof(OrderItem *));
                                 }
                                 break;
+                                
                             }
                         }
                     }
+                
                 }
                 
                 if (!found) {
@@ -354,6 +356,7 @@ int main(int argc, char *argv[]) {
             printf("Invalid command\n");
         }
         printf("cmd> ");
+        free(command);
     }
     if (command != NULL) {
         if ((strcmp(command, "quit")) == 0) {
@@ -364,6 +367,7 @@ int main(int argc, char *argv[]) {
     for (int i = 0; i < order->count; i++) {
         free(order->list[i]);
     }
+    free(command);
     free(order->list);
     free(order);
     return 0;

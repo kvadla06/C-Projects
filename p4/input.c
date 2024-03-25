@@ -13,7 +13,7 @@
 char *readLine( FILE *fp ) 
 {
     int arraySize = INITIAL_SIZE;
-    char *str = (char *)malloc(arraySize * sizeof(char));
+    char *str = (char *)malloc((arraySize + 1) * sizeof(char));
 
     int ind = 0;
     int ch;

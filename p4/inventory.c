@@ -47,6 +47,7 @@ void readRecords( char const *filename, Inventory *inventory )
             fprintf( stderr, "Invalid record file: %s\n", filename);
             exit( EXIT_FAILURE );
         }
+        free(str);
         str = readLine(fp);
         int len = 0;
         for (int i = 0; str[i] != '\0'; i++) {
@@ -58,6 +59,7 @@ void readRecords( char const *filename, Inventory *inventory )
         } else {
             strcpy(rec->artist, str);
         }
+        free(str);
         str = readLine(fp);
         len = 0;
         for (int i = 0; str[i] != '\0'; i++) {
@@ -69,8 +71,7 @@ void readRecords( char const *filename, Inventory *inventory )
         } else {
             strcpy(rec->title, str);
         }
-    
-    
+        free(str);
         if (rec->id < 0 || rec->copies < 0) {
             fprintf( stderr, "Invalid record file: %s\n", filename);
             exit( EXIT_FAILURE );
@@ -101,7 +102,7 @@ void readRecords( char const *filename, Inventory *inventory )
             inventory->list = (Record **)realloc(inventory->list, inventory->capacity * sizeof(Record *));
         }
     }
-    
+    free(str);
     fclose(fp);
 }
 
