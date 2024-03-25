@@ -82,6 +82,7 @@ void readRecords( char const *filename, Inventory *inventory )
                 if (inventory->list[i]->id == rec->id) {
                     if ((strcmp(inventory->list[i]->genre, rec->genre)) == 0 && (strcmp(inventory->list[i]->artist, rec->artist)) == 0 && (strcmp(inventory->list[i]->title, rec->title)) == 0 ) {
                         inventory->list[i]->copies += rec->copies;
+                        free(rec);
                         found = true;
                         break;
                     } else {

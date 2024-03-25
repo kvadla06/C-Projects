@@ -286,7 +286,7 @@ int main(int argc, char *argv[]) {
                             order->list[i]->copies -= reccopy;
                             found = true;
                             if (order->list[i]->copies == 0) {
-                                order->list[i] = NULL;
+                                free(order->list[i]);
                                 for (int j = i; j < order->count - 1; j++) {
                                     order->list[j] = order->list[j + 1];
                                 }
