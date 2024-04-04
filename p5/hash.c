@@ -11,8 +11,8 @@
 int main(int argc, char *argv[]) {
     FILE *file = stdin;
     SHAState *state = makeState();
-    byte buffer[BLOCK_SIZE];
-    int bytes_read;
+    byte input[BLOCK_SIZE];
+    int read;
     if (argc > 2) {
         fprintf( stderr, "usage: hash [input_file]\n");
         exit( EXIT_FAILURE );
@@ -25,8 +25,8 @@ int main(int argc, char *argv[]) {
         }
     }
 
-    while ((bytes_read = fread(buffer, 1, BLOCK_SIZE, file)) > 0) {
-        update(state, buffer, bytes_read);
+    while ((read = fread(input, 1, BLOCK_SIZE, file)) > 0) {
+        update(state, input, read);
     }
 
     word hash[HASH_WORDS];
