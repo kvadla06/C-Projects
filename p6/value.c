@@ -195,9 +195,6 @@ void stringDestroy( Value *v )
 }
 
 Value *parseString(const char *str) {
-    while (isspace(*str)) {
-        str++;
-    }
 
     if (*str != '\"') {
         return NULL;

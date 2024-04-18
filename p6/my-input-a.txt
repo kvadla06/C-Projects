@@ -1,0 +1,3 @@
+set x 10
+plus x "string"
+quit

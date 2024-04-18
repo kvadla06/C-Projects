@@ -1,0 +1,6 @@
+set x 10.0
+set y "string"
+plus x 20.0
+plus x "string"
+plus y 5
+quit

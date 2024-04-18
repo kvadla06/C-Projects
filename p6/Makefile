@@ -1,5 +1,4 @@
 CFLAGS += -Wall -g -std=c99
-LDLIBS += -lgcov
 driver: input.o value.o map.o driver.o
 	gcc $(CFLAGS) input.o value.o map.o driver.o -o driver
 

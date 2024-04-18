@@ -1,0 +1,4 @@
+set x "      string space"
+set y invalid"
+set y "invalid
+quit
