@@ -163,6 +163,7 @@ static void freeNode(Node *node) {
 
 void freeMap(Map *m) {
   if (m == NULL || m->root == NULL) {
+    free(m);
     return;
   }
 
