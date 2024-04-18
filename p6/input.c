@@ -21,7 +21,7 @@ char *readLine( FILE *fp )
     while ((ch = fgetc(fp)) != '\n' && ch != EOF) {
         str[ind] = ch;
         ind++; 
-        if (ind > arraySize) {
+        if (ind >= arraySize) {
             arraySize *= 2;
             str = (char *)realloc(str, arraySize * sizeof(char));
         }
