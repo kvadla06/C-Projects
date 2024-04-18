@@ -173,16 +173,24 @@ char *stringToString( Value const *v )
 // Plus method for string.
 bool stringPlus( Value *v, Value const *x )
 {
-  if ( x->toString != stringToString )
-    return false;
+  
   
   StringValue *this = (StringValue *) v;
-  StringValue *that = (StringValue *) x;
-
-  char str[DOUBLE_LENGTH];
-  strcpy(str, this->val);
-  strcat(str, that->val);
-  strcpy(this->val, str);
+  if ( x->toString != stringToString ){
+    char *str = x->toString(x);
+    char str2[DOUBLE_LENGTH]; 
+    strcpy(str2, this->val);
+    strcat(str2, str);
+    strcpy(this->val, str2);
+    free(str);
+  } else {
+    StringValue *that = (StringValue *) x;
+    char str[DOUBLE_LENGTH];
+    strcpy(str, this->val);
+    strcat(str, that->val);
+    strcpy(this->val, str);
+  }
+  
   return true;
 }
 
