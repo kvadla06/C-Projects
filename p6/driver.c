@@ -47,14 +47,13 @@ int main(int argc, char *argv[])
                 } else if ((v = mapGet(map, key)) != NULL) {
                     Value *v2;
                     if ((v2 = parseInteger(val)) != NULL ) {
+                        v->destroy(v);
                         mapSet(map, key, v2);
                     } else if ((v2 = parseDouble(val)) != NULL) {
                         mapSet(map, key, v2);
                     } else if ((v2 = parseString(val)) != NULL) {
                         mapSet(map, key, v2);
-                    } else {
-                        printf("invalid\n");
-                    }
+                    } 
                 } else if (v == NULL) {
                     if ((v = parseInteger(val)) != NULL ) {
                         mapSet(map, key, v);
@@ -110,7 +109,6 @@ int main(int argc, char *argv[])
             if ((v = parseInteger(val)) == NULL ) {
                 if ((v = parseDouble(val)) == NULL) {
                     if ((v = parseString(val)) == NULL) {
-                        printf("invalid\n");
                     }
                 }
             }
@@ -129,7 +127,7 @@ int main(int argc, char *argv[])
             char buffer[ 2 ];
             int paramnum = sscanf(command, "%s%1s", user, buffer); 
             if (paramnum != 1) {
-                printf("Invalid command\n");
+                printf("invalid\n");
             } else {
                 int size = mapSize(map);
                 printf("%d\n", size);

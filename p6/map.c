@@ -80,9 +80,6 @@ int mapSize(Map *m) {
 }
 
 void mapSet(Map *m, const char *key, Value *val) {
-  if (m == NULL || key == NULL || *key == '\0') {
-    return;
-  }
 
   if (m->root == NULL) {
     m->root = newNode();
@@ -101,9 +98,6 @@ void mapSet(Map *m, const char *key, Value *val) {
 }
 
 Value *mapGet(Map *m, const char *key) {
-  if (m == NULL || key == NULL || *key == '\0') {
-    return NULL;
-  }
 
   if (m->root == NULL) {
     return NULL;
@@ -122,9 +116,6 @@ Value *mapGet(Map *m, const char *key) {
 }
 
 bool mapRemove(Map *m, const char *key) {
-  if (m == NULL || key == NULL) {
-    return false;
-  }
 
   Node *currentNode = m->root;
   Node **childNode = NULL;

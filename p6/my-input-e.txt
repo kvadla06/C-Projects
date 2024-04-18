@@ -1,0 +1,3 @@
+set x 10
+remove x 10
+remove y

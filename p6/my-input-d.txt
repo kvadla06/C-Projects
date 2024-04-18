@@ -1,0 +1,5 @@
+set no 10.0
+set no 13.2
+set x "string"
+set x "abc"
+quit

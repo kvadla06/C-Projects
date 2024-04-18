@@ -1,4 +1,4 @@
-set x "      string space"
+set x   "      string space"
 set y invalid"
 set y "invalid
 quit
