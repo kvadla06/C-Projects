@@ -24,6 +24,7 @@ This repository showcases a collection of C projects that demonstrate my problem
 🔹 Skills Used: Data structures, hashing, and dynamic memory allocation.
 
 ## Why These Projects Matter
-🛠 Practical Application: These projects involve real-world applications of C programming concepts.\
-🔍 Efficient Problem-Solving: Each project is designed to optimize performance and memory usage.\
-💡 Strong Coding Practices: Emphasis on readability, modularity, and well-documented code.
+These projects highlight my expertise in:\
+✔ C programming fundamentals – Strings, pointers, memory management, and file handling.\
+✔ Algorithmic thinking – Working with hashing, maps, and number systems.\
+✔ Efficient data processing – Using structured data storage and retrieval techniques.
