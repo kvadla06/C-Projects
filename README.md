@@ -1,19 +1,29 @@
 # C Projects by Kavya Vadla
-Overview
-This repository showcases a collection of C projects I have developed, demonstrating my skills in algorithm implementation, data structures, memory management, and problem-solving. These projects highlight my ability to write efficient and structured code while working on various aspects of system programming and software development.
+## Overview
+This repository showcases a collection of C projects that demonstrate my problem-solving skills, algorithmic thinking, and proficiency in systems programming. Each project focuses on different aspects of C programming, including data structures, hashing, numerical systems, and file handling.
 
-# Key Projects
-📌 [Project Name]
-Description: Briefly explain what this project does and why it's significant.
-Skills Used: Example: File I/O, Pointers, Dynamic Memory Allocation
+## Key Projects
+1️⃣ Madlib Project
+📌 Description: A fun text-based program that generates Madlib-style stories by taking user input.\
+🔹 Skills Used: String manipulation, user input handling, and formatted output.
 
-📌 [Project Name]
-Description: Briefly explain the functionality and complexity of this project.
-Skills Used: Example: Hash Tables, Linked Lists, Recursion
+2️⃣ Vigesimal Calculation Program
+📌 Description: A program that performs calculations using the base-20 (vigesimal) number system.\
+🔹 Skills Used: Number system conversion, arithmetic operations, and modular math.
 
-(List more projects as needed, focusing on their technical depth and relevance.)
+3️⃣ Records Store
+📌 Description: A program that manages and stores records, allowing users to add, update, and retrieve data.\
+🔹 Skills Used: File handling, structs, and data organization.
 
-# Why These Projects Matter
-🛠 Practical Application: These projects involve real-world applications of C programming concepts.
-🔍 Efficient Problem-Solving: Each project is designed to optimize performance and memory usage.
+4️⃣ Hashcode Program (256-bit Hashing)
+📌 Description: A program that generates and verifies 256-bit hash values for given inputs, showcasing hashing techniques.\
+🔹 Skills Used: Cryptographic hashing, bitwise operations, and memory management.
+
+5️⃣ Map Implementation
+📌 Description: A custom implementation of a map data structure, allowing key-value storage and retrieval.\
+🔹 Skills Used: Data structures, hashing, and dynamic memory allocation.
+
+## Why These Projects Matter
+🛠 Practical Application: These projects involve real-world applications of C programming concepts.\
+🔍 Efficient Problem-Solving: Each project is designed to optimize performance and memory usage.\
 💡 Strong Coding Practices: Emphasis on readability, modularity, and well-documented code.
